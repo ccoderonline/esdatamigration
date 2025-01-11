@@ -1,5 +1,14 @@
--- CREATE SCHEMA DAILY_RECORDS;
+-- List available schemas
+SELECT schema_name
+FROM information_schema.schemata;
 
--- SELECT TABLE_SCHEMA, TABLE_NAME
--- FROM INFORMATION_SCHEMA.TABLES
--- WHERE TABLE_SCHEMA = 'DAILY_RECORDS';
+-- Create new schema
+CREATE SCHEMA NEW_SCHEMA_NAME;
+
+-- Delete schema
+DROP SCHEMA SCHEMA_NAME_TO_DELETE;
+
+-- List available tables in schema
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'estest';
