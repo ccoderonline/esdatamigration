@@ -1,0 +1,78 @@
+# Data Processing Application Requirements
+## Overview
+
+# The goal is to process unstructured CSV data containing combined daily records of expenses and collections
+#  into a structured format suitable for database insertion. The structured output will create distinct 
+# entries for each date, adhering to the database schema for expenses and collection tables.
+
+## Input Data
+### Input: Unstructured CSV File
+# Contains daily entries with the following columns:
+# - **date**: Date of the record (e.g., 2025-01-01).
+# - **details**: Combined textual field containing:
+#     - Inventory details (item names, quantities, costs).
+#     - Salaries details (chef names, salaries).
+#     - Collection details (UPI, cash, card, and other payment modes).
+
+## Output Data
+### Output: Structured CSV File
+# 1. **structured_data.csv**
+
+#      Columns:
+#      - **date**: Date of the record.
+#      - **day**: Day of the week.
+#      - **inventory**: JSON object storing item details (name, quantity, cost).
+#      - **salaries**: JSON object storing chef names and their salaries.
+#      - **upi**: UPI payment collection (decimal).
+#      - **cash**: Cash payment collection (decimal).
+#      - **card**: Card payment collection (decimal).
+#      - **others**: Other payment modes collection (decimal).
+
+## Functional Requirements
+# 1. **Read Unstructured CSV**
+#      - Load the input CSV file into the application.
+#      - Parse and process the details column to extract meaningful data for inventory, salaries, and collections.
+
+# 2. **Extract and Transform Data**
+#      - **Inventory Data**
+#          - Parse inventory details from details field into JSON objects.
+#          - Each JSON object should include:
+#              - **item**: Name of the inventory item.
+#              - **qty**: Quantity of the item.
+#              - **cost**: Cost of the item.
+#      - **Salaries Data**
+#          - Parse salaries details from details field into JSON objects.
+#          - Each JSON object should include:
+#              - **name**: Name of the chef.
+#              - **salary**: Salary amount.
+#      - **Collection Data**
+#          - Extract collection values (UPI, cash, card, others) from the details field.
+#          - Ensure all extracted values are numeric and non-negative.
+#      - **Date and Day**
+#          - Convert the date column into YYYY-MM-DD format.
+#          - Derive the day of the week from the date.
+
+# 3. **Validate Data**
+#      - Ensure all mandatory fields are present and correctly formatted:
+#          - **date** should be unique and valid.
+#          - **inventory** and **salaries** must be valid JSON.
+#          - Collection values (**upi**, **cash**, **card**, **others**) must be non-negative decimals.
+#      - Handle missing or invalid data gracefully, logging errors for review.
+
+# 4. **Save Structured Data**
+#      - Write the processed and validated data to a single structured CSV file: **structured_data.csv**
+
+## Non-Functional Requirements
+
+# - **Performance**: The application should handle large CSV files efficiently.
+# - **Error Handling**: Log invalid rows with detailed error messages.
+# - **Modularity**: Design functions for specific tasks (e.g., parsing, validation, export) to ensure maintainability.
+# - **Scalability**: Allow easy updates to parsing logic if input data format changes.
+
+## Notes for Developers
+
+# - Use libraries like pandas for CSV handling and transformation.
+# - Consider spaCy or regex for parsing textual data in the details field.
+# - Maintain logs to track processing and errors for audit purposes.
+
+
