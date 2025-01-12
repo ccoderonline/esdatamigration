@@ -20,5 +20,6 @@ CREATE TABLE dailyrecords.collection (
     upi DECIMAL(10, 2) DEFAULT 0.00 NOT NULL,  -- UPI payment collection
     cash DECIMAL(10, 2) DEFAULT 0.00 NOT NULL, -- Cash payment collection
     card DECIMAL(10, 2) DEFAULT 0.00 NOT NULL, -- Card payment collection
+    foodappsettelment DECIMAL(10, 2) DEFAULT 0.00 NOT NULL,
     others DECIMAL(10, 2) DEFAULT 0.00 NOT NULL -- Other payment modes
 );

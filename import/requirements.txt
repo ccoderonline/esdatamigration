@@ -1,0 +1,107 @@
+# Requirements for Uploading Structured CSV Data to SQL Database
+
+## Overview
+The goal is to upload structured CSV data into the SQL database. The input CSV will contain processed and validated data with the following columns:
+- **date**: Date of the record.
+- **day**: Day of the week.
+- **inventory**: JSON object storing item details (name, quantity, cost).
+- **salaries**: JSON object storing chef names and their salaries.
+- **upi**: UPI payment collection (decimal).
+- **cash**: Cash payment collection (decimal).
+- **card**: Card payment collection (decimal).
+- **foodappsettlement**: Food app settlement collection (decimal).
+- **others**: Other payment modes collection (decimal).
+
+This data will be split and inserted into the respective SQL tables (`expenses` and `collection`).
+
+---
+
+## Functional Requirements
+
+### 1. Read the Structured CSV File
+- Load the input CSV into the application using a library like `pandas` or `csv`.
+- Ensure proper parsing of JSON fields (`inventory` and `salaries`) and numerical values for payment modes.
+- Validate the integrity of the data.
+
+### 2. Split Data for Tables
+- Separate the data into two logical groups:
+  - **Expenses Data**:
+    - Columns: `date`, `day`, `inventory`, `salaries`.
+  - **Collection Data**:
+    - Columns: `date`, `day`, `upi`, `cash`, `card`, `foodappsettlement`, `others`.
+
+### 3. Validate Data Before Upload
+- For each record:
+  - Ensure `date` is in the correct format (`YYYY-MM-DD`).
+  - Validate JSON structure of `inventory` and `salaries`.
+    - `inventory` must contain valid `item`, `qty`, and `cost` fields.
+    - `salaries` must contain valid `name` and `salary` fields.
+  - Ensure all numeric fields (`upi`, `cash`, `card`, `foodappsettlement`, `others`) are non-negative.
+  - Check for duplicates or conflicting primary keys (e.g., `date`).
+
+### 4. Database Connection
+- Establish a secure connection to the Azure SQL database using a library like `pyodbc` or `SQLAlchemy`.
+- Use connection pooling for efficient performance.
+
+### 5. Insert Data into Tables
+#### a. Insert into `expenses` Table
+- Prepare SQL `INSERT` statements with the following columns:
+  - `date` (Primary Key)
+  - `day`
+  - `inventory` (as JSON string)
+  - `salaries` (as JSON string)
+- Use `ON DUPLICATE KEY UPDATE` or an equivalent mechanism to handle conflicts and update existing rows if the `date` already exists.
+
+#### b. Insert into `collection` Table
+- Prepare SQL `INSERT` statements with the following columns:
+  - `date` (Primary Key)
+  - `day`
+  - `upi`, `cash`, `card`, `foodappsettlement`, `others`
+- Use `ON DUPLICATE KEY UPDATE` or an equivalent mechanism to handle conflicts and update existing rows if the `date` already exists.
+
+### 6. Log Upload Results
+- Maintain detailed logs for each operation:
+  - Successful inserts.
+  - Rows that failed validation or insertion, along with error details.
+
+### 7. Error Handling
+- Handle common errors such as:
+  - Invalid or missing fields in the CSV.
+  - SQL connection issues.
+  - Duplicate primary keys.
+- Log errors for debugging and retry failed operations as needed.
+
+---
+
+## Non-Functional Requirements
+- **Performance:** Optimize batch insertions for large CSV files.
+- **Scalability:** Design the application to handle an increasing volume of records efficiently.
+- **Security:**
+  - Use parameterized queries to prevent SQL injection.
+  - Encrypt database credentials.
+- **Maintainability:** Modularize the code to allow easy updates to parsing, validation, and insertion logic.
+- **Logging:** Use a robust logging framework to record all significant actions and errors.
+
+---
+
+## Example Process Flow
+1. **Load CSV:** Read `structured_data.csv` into memory.
+2. **Validate Records:** Check the integrity and format of each row.
+3. **Split Data:** Extract `expenses` and `collection` entries.
+4. **Database Operations:**
+   - Insert `expenses` data into the `expenses` table.
+   - Insert `collection` data into the `collection` table.
+5. **Log Results:** Record successes and failures in a log file.
+6. **Error Handling:** Retry or report failed operations.
+
+---
+
+## Notes for Developers
+- Ensure the application is extensible to accommodate changes in the schema or additional columns in the CSV.
+- Implement unit tests for validation and insertion logic.
+- Perform a dry-run mode to validate the CSV without making database changes.
+
+---
+
+Let me know if further clarification or modifications are required!
+

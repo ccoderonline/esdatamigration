@@ -15,3 +15,7 @@ WHERE table_schema = 'YOUR_SCHEMA_NAME';
 
 -- Delete table by name
 DROP TABLE YOUR_SCHEMA_NAME.YOUR_TABLE_NAME;
+
+-- Drop all content from tables in the schema
+TRUNCATE TABLE collection;
+

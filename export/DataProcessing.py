@@ -9,7 +9,7 @@ def read_csv(file_path):
 def parse_details(row):
     inventory = []
     salaries = []
-    collections = {'upi': 0, 'cash': 0, 'foodappsettelment': 0, 'card': 0, 'others': 0}
+    collections = {'upi': 0, 'cash': 0, 'foodappsettlement': 0, 'card': 0, 'others': 0}
 
     if 'chef_salary' in row and row['chef_salary'] == 'H':
         inventory.append('H')
@@ -18,7 +18,7 @@ def parse_details(row):
 
     inventory_columns = ['Tomato_Sauce', 'Chilly_Sauce', 'Tasting_Salt', 'Salt', 'Chilli_powder', 'Garam_Masala', 'Chicken_Masala', 'White_Pepper', 'Paper_Plates', 'Forks&Spoons', 'Handel_Covers', 'Parcel_Covers', 'Venigar', 'Ginger_Paste', 'Tooth_Picks', 'Food_Colour', 'Dry_Gobi', 'Rice_Bag', 'Oil', 'Eggs', 'Noodles', 'Vegetables', 'Chicken', 'Water', 'Gas', 'grocories', 'soya_Sauce', 'other_expenses']
     salary_columns = ['chef_salary']
-    collection_columns = ['upi', 'cash', 'foodappsettelment']
+    collection_columns = ['upi', 'cash', 'foodappsettlement',]
 
     for col in inventory_columns:
         if col in row and not pd.isna(row[col]) and float(row[col]) > 0:
@@ -50,7 +50,7 @@ def transform_data(df):
             'upi': collections['upi'],
             'cash': collections['cash'],
             'card': collections['card'],
-            'foodappsettelment': collections['foodappsettelment'],
+            'foodappsettlement': collections['foodappsettlement'],
             'others': collections['others']
         })
     
@@ -63,9 +63,9 @@ def validate_data(df):
             datetime.strptime(row['date'], '%Y-%m-%d')
             json.loads(row['inventory'])
             json.loads(row['salaries'])
-            assert row['upi'] >= 0 and row['cash'] >= 0 and row['card'] >= 0 and row['foodappsettelment'] >= 0 and row['others'] >= 0
+            assert row['upi'] >= 0 and row['cash'] >= 0 and row['card'] >= 0 and row['foodappsettlement'] >= 0 and row['others'] >= 0
             if row['inventory'] == 'H' and row['salaries'] == 'H':
-                assert row['upi'] == 0 and row['cash'] == 0 and row['card'] == 0 and row['foodappsettelment'] == 0 and row['others'] == 0
+                assert row['upi'] == 0 and row['cash'] == 0 and row['card'] == 0 and row['foodappsettlement'] == 0 and row['others'] == 0
         except Exception as e:
             errors.append((index, str(e)))
     
