@@ -20,23 +20,24 @@ class AzureSQLDatabase:
 
     def insert_expenses(self, cursor, row):
         cursor.execute("""
-            INSERT INTO expenses (date, day, inventory, salaries)
-            VALUES (?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-            day = VALUES(day),
-            inventory = VALUES(inventory),
-            salaries = VALUES(salaries)
+            MERGE INTO dailyrecords.expenses AS target
+            USING (SELECT ? AS date, ? AS day, ? AS inventory, ? AS salaries) AS source
+            ON target.date = source.date
+            WHEN MATCHED THEN
+                UPDATE SET day = source.day, inventory = source.inventory, salaries = source.salaries
+            WHEN NOT MATCHED THEN
+                INSERT (date, day, inventory, salaries)
+                VALUES (source.date, source.day, source.inventory, source.salaries);
         """, (row['date'], row['day'], row['inventory'], row['salaries']))
 
     def insert_collection(self, cursor, row):
         cursor.execute("""
-            INSERT INTO collection (date, day, upi, cash, card, foodappsettlement, others)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-            day = VALUES(day),
-            upi = VALUES(upi),
-            cash = VALUES(cash),
-            card = VALUES(card),
-            foodappsettlement = VALUES(foodappsettlement),
-            others = VALUES(others)
+            MERGE INTO dailyrecords.collection AS target
+            USING (SELECT ? AS date, ? AS day, ? AS upi, ? AS cash, ? AS card, ? AS foodappsettlement, ? AS others) AS source
+            ON target.date = source.date
+            WHEN MATCHED THEN
+                UPDATE SET day = source.day, upi = source.upi, cash = source.cash, card = source.card, foodappsettlement = source.foodappsettlement, others = source.others
+            WHEN NOT MATCHED THEN
+                INSERT (date, day, upi, cash, card, foodappsettlement, others)
+                VALUES (source.date, source.day, source.upi, source.cash, source.card, source.foodappsettlement, source.others);
         """, (row['date'], row['day'], row['upi'], row['cash'], row['card'], row['foodappsettlement'], row['others']))
