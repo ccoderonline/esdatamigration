@@ -10,7 +10,7 @@ def parse_details(row):
     salaries = []
     collections = {'upi': 0, 'cash': 0, 'foodappsettlement': 0, 'card': 0, 'others': 0}
 
-    status = ''
+    status = 'na'
     if 'chef_salary' in row and row['chef_salary'] == 'H':
         status = 'holiday'
         return inventory, salaries, collections, status
@@ -45,7 +45,7 @@ def transform_data(df):
             'date': date.strftime('%Y-%m-%d'),
             'day': day,
             'status': status,
-            'importance': "",
+            'importance': 'na',
             'inventory': json.dumps(inventory),
             'salaries': json.dumps(salaries),
             'upi': collections['upi'],
@@ -88,6 +88,6 @@ def main(input_file, output_file):
         print(f"Data successfully processed and saved to {output_file}")
 
 if __name__ == "__main__":
-    input_file = r"D:\\KiranT\\CCODESGIT\\unstructured_data.csv"
-    output_file = r"D:\\KiranT\\CCODESGIT\\structured_data.csv"
+    input_file = "/workspaces/esdatamigration/resources/unstructured_data.csv"
+    output_file = "/workspaces/esdatamigration/resources/structured_data.csv"
     main(input_file, output_file)
