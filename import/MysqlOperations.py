@@ -18,23 +18,31 @@ class MySQLDatabase:
 
     def insert_expenses(self, cursor, row):
         cursor.execute("""
-            INSERT INTO expenses (date, day, inventory, salaries)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO expenses (date, inventory, salaries)
+            VALUES (%s, %s, %s)
             ON DUPLICATE KEY UPDATE
-            day = VALUES(day),
             inventory = VALUES(inventory),
             salaries = VALUES(salaries)
-        """, (row['date'], row['day'], row['inventory'], row['salaries']))
+        """, (row['date'], row['inventory'], row['salaries']))
 
     def insert_collection(self, cursor, row):
         cursor.execute("""
-            INSERT INTO collection (date, day, upi, cash, card, foodappsettlement, others)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO collection (date, upi, cash, card, foodappsettlement, others)
+            VALUES (%s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
-            day = VALUES(day),
             upi = VALUES(upi),
             cash = VALUES(cash),
             card = VALUES(card),
             foodappsettlement = VALUES(foodappsettlement),
             others = VALUES(others)
-        """, (row['date'], row['day'], row['upi'], row['cash'], row['card'], row['foodappsettlement'], row['others']))
+        """, (row['date'], row['upi'], row['cash'], row['card'], row['foodappsettlement'], row['others']))
+
+    def insert_date(self, cursor, row):
+        cursor.execute("""
+            INSERT INTO date (date, day, status, importance)
+            VALUES (%s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+            day = VALUES(day),
+            status = VALUES(status),
+            importance = VALUES(importance)
+        """, (row['date'], row['day'], row['status'], row['importance']))

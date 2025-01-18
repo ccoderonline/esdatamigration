@@ -1,6 +1,5 @@
 import pandas as pd
 import json
-import re
 from datetime import datetime
 
 def read_csv(file_path):
@@ -11,10 +10,10 @@ def parse_details(row):
     salaries = []
     collections = {'upi': 0, 'cash': 0, 'foodappsettlement': 0, 'card': 0, 'others': 0}
 
+    status = ''
     if 'chef_salary' in row and row['chef_salary'] == 'H':
-        inventory.append('H')
-        salaries.append('H')
-        return inventory, salaries, collections
+        status = 'holiday'
+        return inventory, salaries, collections, status
 
     inventory_columns = ['Tomato_Sauce', 'Chilly_Sauce', 'Tasting_Salt', 'Salt', 'Chilli_powder', 'Garam_Masala', 'Chicken_Masala', 'White_Pepper', 'Paper_Plates', 'Forks&Spoons', 'Handel_Covers', 'Parcel_Covers', 'Venigar', 'Ginger_Paste', 'Tooth_Picks', 'Food_Colour', 'Dry_Gobi', 'Rice_Bag', 'Oil', 'Eggs', 'Noodles', 'Vegetables', 'Chicken', 'Water', 'Gas', 'grocories', 'soya_Sauce', 'other_expenses']
     salary_columns = ['chef_salary']
@@ -32,7 +31,7 @@ def parse_details(row):
         if col in row and not pd.isna(row[col]):
             collections[col] = float(row[col])
     
-    return inventory, salaries, collections
+    return inventory, salaries, collections, status
 
 def transform_data(df):
     structured_data = []
@@ -40,11 +39,13 @@ def transform_data(df):
     for _, row in df.iterrows():
         date = datetime.strptime(row['Date'], '%m/%d/%Y')
         day = date.strftime('%A')
-        inventory, salaries, collections = parse_details(row)
+        inventory, salaries, collections, status = parse_details(row)
         
         structured_data.append({
             'date': date.strftime('%Y-%m-%d'),
             'day': day,
+            'status': status,
+            'importance': "",
             'inventory': json.dumps(inventory),
             'salaries': json.dumps(salaries),
             'upi': collections['upi'],

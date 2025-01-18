@@ -23,6 +23,7 @@ class CSVHandler:
         return errors
 
     def split_data(self, df):
+        date_data = df[['date', 'day', 'status', 'importance']]
         expenses_data = df[['date', 'day', 'inventory', 'salaries']]
         collection_data = df[['date', 'day', 'upi', 'cash', 'card', 'foodappsettlement', 'others']]
-        return expenses_data, collection_data
+        return date_data, expenses_data, collection_data

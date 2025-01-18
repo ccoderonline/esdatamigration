@@ -28,15 +28,25 @@ class DataImporter:
                 print(f"Error in row {error[0]}: {error[1]}")
             return
         
-        expenses_data, collection_data = self.csv_handler.split_data(df)
+        date_data, expenses_data, collection_data = self.csv_handler.split_data(df)
         
         cursor = self.conn.conn.cursor()
         
-        for _, row in expenses_data.iterrows():
-            self.conn.insert_expenses(cursor, row)
+        for _, row in date_data.iterrows():
+            self.conn.insert_date(cursor, row)
         
-        for _, row in collection_data.iterrows():
-            self.conn.insert_collection(cursor, row)
+        for _, row in date_data.iterrows():
+            if row['status'].lower() == 'holiday':
+                print(f"Skipping expenses and collection for holiday on {row['date']}")
+                continue
+            
+            for _, exp_row in expenses_data.iterrows():
+                if exp_row['date'] == row['date']:
+                    self.conn.insert_expenses(cursor, exp_row)
+            
+            for _, col_row in collection_data.iterrows():
+                if col_row['date'] == row['date']:
+                    self.conn.insert_collection(cursor, col_row)
         
         self.conn.conn.commit()
         cursor.close()
